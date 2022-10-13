@@ -50,10 +50,6 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ],
-        "post-criar":["@php artisan migrate:fresh"],
-        "compile": [
-            "@php artisan db:seed --class=DatabaseSeeder --force"
         ]
     },
     "extra": {
