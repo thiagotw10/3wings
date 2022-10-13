@@ -61,9 +61,10 @@ class ContactsController extends Controller
                 'country' => ['nullable', 'max:2'],
                 'postal_code' => ['nullable', 'max:25'],
             ])
+
         );
 
-        return Redirect::route('contacts')->with('success', 'Contact created.');
+        return Redirect::route('contacts')->with('success', 'Contato criado com sucesso.');
     }
 
     public function edit(Contact $contact)
@@ -111,20 +112,20 @@ class ContactsController extends Controller
             ])
         );
 
-        return Redirect::back()->with('success', 'Contact updated.');
+        return Redirect::back()->with('success', 'Contato Atualizado com sucesso.');
     }
 
     public function destroy(Contact $contact)
     {
         $contact->delete();
 
-        return Redirect::back()->with('success', 'Contact deleted.');
+        return Redirect::back()->with('success', 'Contato deletado com sucesso.');
     }
 
     public function restore(Contact $contact)
     {
         $contact->restore();
 
-        return Redirect::back()->with('success', 'Contact restored.');
+        return Redirect::back()->with('success', 'Contato restaurado com sucesso.');
     }
 }
