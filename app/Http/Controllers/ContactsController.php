@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contact;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use App\Models\Contact;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class ContactsController extends Controller
 {
@@ -46,7 +47,7 @@ class ContactsController extends Controller
 
     public function store()
     {
-        Auth::user()->account->contacts()->create(
+       $user = Auth::user()->account->contacts()->create(
             Request::validate([
                 'first_name' => ['required', 'max:50'],
                 'last_name' => ['required', 'max:50'],
@@ -63,6 +64,11 @@ class ContactsController extends Controller
             ])
 
         );
+
+        if($user){
+            $user->photo_path = Request::file('photo') ? Request::file('photo')->store('contacts') : null;
+            $user->save();
+        }
 
         return Redirect::route('contacts')->with('success', 'Contato criado com sucesso.');
     }
@@ -81,6 +87,7 @@ class ContactsController extends Controller
                 'city' => $contact->city,
                 'region' => $contact->region,
                 'country' => $contact->country,
+                'photo' => $contact->photo_path ? URL::route('image', ['path' => $contact->photo_path, 'w' => 40, 'h' => 40, 'fit' => 'crop']) : null,
                 'postal_code' => $contact->postal_code,
                 'deleted_at' => $contact->deleted_at,
             ],
@@ -94,7 +101,7 @@ class ContactsController extends Controller
 
     public function update(Contact $contact)
     {
-        $contact->update(
+
             Request::validate([
                 'first_name' => ['required', 'max:50'],
                 'last_name' => ['required', 'max:50'],
@@ -109,8 +116,15 @@ class ContactsController extends Controller
                 'region' => ['nullable', 'max:50'],
                 'country' => ['nullable', 'max:2'],
                 'postal_code' => ['nullable', 'max:25'],
-            ])
-        );
+                'image' => ['nullable', 'image'],
+            ]);
+
+            $contact->update(Request::only('first_name', 'last_name', 'organization_id', 'email', 'phone', 'address', 'city', 'region', 'country', 'postal_code'));
+
+        if(Request::file('photo')){
+            $contact->update(['photo_path' => Request::file('photo')->store('contacts')]);
+        }
+
 
         return Redirect::back()->with('success', 'Contato Atualizado com sucesso.');
     }

@@ -1,12 +1,13 @@
 <template>
-  <div>
+  <div class="relative ...">
     <Head :title="`${form.first_name} ${form.last_name}`" />
     <h1 class="mb-8 text-3xl font-bold">
       <Link class="text-indigo-400 hover:text-indigo-600" href="/contacts">Contatos</Link>
       <span class="text-indigo-400 font-medium">/</span>
       {{ form.first_name }} {{ form.last_name }}
     </h1>
-    <trashed-message v-if="contact.deleted_at" class="mb-6" @restore="restore"> This contact has been deleted. </trashed-message>
+    <img v-if="contact.photo" class="absolute top-0 right-0 w-10 h-10 rounded-full" :src="contact.photo" />
+    <trashed-message v-if="contact.deleted_at" class="mb-6" @restore="restore"> Este contato foi excluído. </trashed-message>
     <div class="max-w-3xl bg-white rounded-md shadow overflow-hidden">
       <form @submit.prevent="update">
         <div class="flex flex-wrap -mb-8 -mr-6 p-8">
@@ -27,6 +28,7 @@
             <option value="US">United States</option>
           </select-input>
           <text-input v-model="form.postal_code" :error="form.errors.postal_code" class="pb-8 pr-6 w-full lg:w-1/2" label="CEP" />
+          <file-input v-model="form.photo" :error="form.errors.photo" class="pb-8 pr-6 w-full lg:w-1/2" type="file" accept="image/*" label="Foto" />
         </div>
         <div class="flex items-center px-8 py-4 bg-gray-50 border-t border-gray-100">
           <button v-if="!contact.deleted_at" class="text-red-600 hover:underline" tabindex="-1" type="button" @click="destroy">Deletar contato</button>
@@ -44,6 +46,7 @@ import TextInput from '@/Shared/TextInput'
 import SelectInput from '@/Shared/SelectInput'
 import LoadingButton from '@/Shared/LoadingButton'
 import TrashedMessage from '@/Shared/TrashedMessage'
+import FileInput from '@/Shared/FileInput'
 
 export default {
   components: {
@@ -53,6 +56,7 @@ export default {
     SelectInput,
     TextInput,
     TrashedMessage,
+    FileInput,
   },
   layout: Layout,
   props: {
@@ -63,6 +67,7 @@ export default {
   data() {
     return {
       form: this.$inertia.form({
+        _method: 'put',
         first_name: this.contact.first_name,
         last_name: this.contact.last_name,
         organization_id: this.contact.organization_id,
@@ -73,20 +78,23 @@ export default {
         region: this.contact.region,
         country: this.contact.country,
         postal_code: this.contact.postal_code,
+        photo: null,
       }),
     }
   },
   methods: {
     update() {
-      this.form.put(`/contacts/${this.contact.id}`)
+      this.form.post(`/contacts/${this.contact.id}`, {
+        onSuccess: () => this.form.reset('photo'),
+      })
     },
     destroy() {
-      if (confirm('Are you sure you want to delete this contact?')) {
+      if (confirm('Tem certeza de que deseja excluir este contato?')) {
         this.$inertia.delete(`/contacts/${this.contact.id}`)
       }
     },
     restore() {
-      if (confirm('Are you sure you want to restore this contact?')) {
+      if (confirm('Tem certeza de que deseja restaurar este contato?')) {
         this.$inertia.put(`/contacts/${this.contact.id}/restore`)
       }
     },

@@ -25,6 +25,7 @@
             <option value="US">United States</option>
           </select-input>
           <text-input v-model="form.postal_code" :error="form.errors.postal_code" class="pb-8 pr-6 w-full lg:w-1/2" label="CEP" />
+          <file-input v-model="form.photo" :error="form.errors.photo" class="pb-8 pr-6 w-full lg:w-1/2" type="file" accept="image/*" label="Foto" />
         </div>
         <div class="flex items-center justify-end px-8 py-4 bg-gray-50 border-t border-gray-100">
           <loading-button :loading="form.processing" class="btn-indigo" type="submit">Criar Contato</loading-button>
@@ -40,6 +41,7 @@ import Layout from '@/Shared/Layout'
 import TextInput from '@/Shared/TextInput'
 import SelectInput from '@/Shared/SelectInput'
 import LoadingButton from '@/Shared/LoadingButton'
+import FileInput from '@/Shared/FileInput'
 
 export default {
   components: {
@@ -48,6 +50,7 @@ export default {
     LoadingButton,
     SelectInput,
     TextInput,
+    FileInput,
   },
   layout: Layout,
   props: {
@@ -67,6 +70,7 @@ export default {
         region: '',
         country: '',
         postal_code: '',
+        photo: null,
       }),
     }
   },

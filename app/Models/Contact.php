@@ -11,6 +11,11 @@ class Contact extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        'first_name',
+        'last_name',
+    ];
+
     public function resolveRouteBinding($value, $field = null)
     {
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();

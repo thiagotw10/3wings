@@ -1,19 +1,35 @@
 <template>
-  <div>
+  <div class="relative">
     <Head title="Dashboard" />
     <h1 class="mb-8 text-3xl font-bold">Dashboard</h1>
-    <p class="mb-8 leading-normal">Hey there! Welcome to Ping CRM, a demo app designed to help illustrate how <a class="text-indigo-500 hover:text-orange-600 underline" href="https://inertiajs.com">Inertia.js</a> works.</p>
+    <div class="flex flex-row justify-between w-2/4 absolute top-0 right-0">
+      <modal-organizacao class="w-2/5" :dados-contato="organizacoes" />
+      <modal-contatos class="w-2/5" :dados-contato="contatos" />
+    </div>
+    <grafico :post-title="dashboard" style="max-width: 500px; min-width: 300px" />
   </div>
 </template>
 
 <script>
 import { Head } from '@inertiajs/inertia-vue3'
 import Layout from '@/Shared/Layout'
+import Grafico from '@/Shared/Grafico'
+import ModalContatos from '@/Shared/ModalContatos'
+import ModalOrganizacao from '@/Shared/ModalOrganizacao'
+
 
 export default {
   components: {
     Head,
+    Grafico,
+    ModalContatos,
+    ModalOrganizacao,
   },
   layout: Layout,
+  props: {
+    dashboard: Object,
+    contatos: Object,
+    organizacoes: Object,
+  },
 }
 </script>

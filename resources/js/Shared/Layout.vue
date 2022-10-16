@@ -72,6 +72,7 @@ export default {
   },
   props: {
     auth: Object,
+    dados: Object,
   },
 }
 </script>
